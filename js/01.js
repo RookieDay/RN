@@ -599,3 +599,164 @@ class LoginControl extends React.Component{
         )
     }
 }
+
+// 与运算符 &&
+function MailBox(props){
+    const unreadMeassage = props.unreadMeassage;
+    return (
+        <div>   
+            <h1>hello</h1>
+            {unreadMeassage.length > 0 &&
+            <h2>you have {unreadMeassage.length} unread message</h2>
+            }
+        </div>
+    )
+}
+
+const messages = ['React', 'Re: React', 'Re:Re: React'];
+ReactDOM.render(
+    <MailBox unreadMeassage={message}/>,
+    document.getElementById('root')
+)
+
+
+// 阻止组件渲染
+// 在极少数情况下，你可能希望隐藏组件，即使它被其他组件渲染。让 render 方法返回 null 而不是它的渲染结果即可实现。
+function WarningBanner(props){
+    if(!props.warn){
+        return null;
+    }
+    return (
+        <div className="warning">
+            Warning!
+        </div>
+    )
+}
+
+class Page extends React.Component{
+    constructor(props){
+        super(props);
+        this.state = {showWarning:true};
+        this.handleClick = this.handleClick.bind(this);
+    }
+    handleClick(){
+        this.setState(prevState=>({
+            showWarning:!prevState.showWarning
+        }))
+    }
+    render(){
+        return (
+            <div>   
+                <WarningBanner warn={this.state.showWarning}/>
+                <button onClick={this.handleClick}>
+                    {this.state.showWarning?'hide':'show'}
+                </button>
+            </div>
+        )
+    }
+}
+
+ReactDOM.render(
+    <Page/>,
+    document.getElementById('root')
+)
+// 组件的 render 方法返回 null 并不会影响该组件生命周期方法的回调。例如，componentWillUpdate 和 componentDidUpdate 依然可以被调用。
+
+const numbers = [1,2,3,4];
+const listNumbers = number.map((number)=>
+    <li>{number}</li>
+);
+ReactDOM.render(
+    <ul>{listNumbers}</ul>,
+    document.getElementById('root')
+)
+// 这段代码生成了一个1到5的数字列表
+
+// 基础列表组件
+function NumberList(props){
+    const numbers = props.numbers;
+    const listNumbers = numbers.map((number)=>
+        <li key={number.toString()}>
+            {number}
+        </li>
+    );
+    return (
+        <ul>{listNumbers}</ul>
+    )
+}
+const number = [1,23,45,4];
+ReactDOM.render(
+    <NumberList numbers={number}/>,
+    document.getElementById('root')
+)
+
+// 当我们运行这段代码，将会看到一个警告a key should be provided for list items,意思是当你创建一个元素时，必须包括一个特殊的key属性。
+
+// key的正确使用方式
+function listItem(props){
+    return <li>{props.value}</li>
+}
+function NumberList(props){
+    const numbers = props.numbers;
+    const listItems = numbers.map((number)=>{
+        <listItem key={number.toString()} value={number}/>
+    })
+    return(
+        <ul>
+            {listItems}
+        </ul>
+    )
+}
+
+const numbers = [1, 2, 3, 4, 5];
+ReactDOM.render(
+    <NumberList numbers={numbers}/>,
+    document.getElementById('root')
+)
+// 当你在map()方法内部调用的元素时，你最好随时记得为每一个元素加上一个独一无二的key。
+
+
+元素的key在他的兄弟元素之间应该唯一
+// 数组元素中使用的key在其兄弟之间应该是独一无二的。然而，它们不需要是全局唯一的。当我们生成两个不同的数组时，我们可以使用相同的键
+function Blog(props){
+    const slidebar = (
+        <ul>
+            {props.posts.map((post)=>
+                <li key={post.id}>
+                    {post.title}   
+                </li> 
+            )}
+        </ul>
+    )
+    const content = props.posts.map((post) =>
+        <div key={post.id}>
+        <h3>{post.title}</h3>
+        <p>{post.content}</p>
+        </div>
+    );
+    return (
+        <div>   
+            {slidebar}
+            <hr/>
+            {content}
+        </div>
+    )
+}
+
+const posts = [
+  {id: 1, title: 'Hello World', content: 'Welcome to learning React!'},
+  {id: 2, title: 'Installation', content: 'You can install React from npm.'}
+];
+ReactDOM.render(
+  <Blog posts={posts} />,
+  document.getElementById('root')
+);
+
+// key会作为给React的提示，但不会传递给你的组件。如果您的组件中需要使用和key相同的值，请将其作为属性传递：
+const content = posts.map((post) =>
+  <Post
+    key={post.id}
+    id={post.id}
+    title={post.title} />
+);
+// 上面例子中，Post组件可以读出props.id，但是不能读出props.key
