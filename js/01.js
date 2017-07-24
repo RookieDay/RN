@@ -1118,3 +1118,155 @@ ReactDOM.render(
 //     接着React会使用Calculator指定的新props来分别调用TemperatureInput组件.React也会识别出子组件的UI界面。
 //     React DOM 会更新DOM来匹配对应的值。我们编辑的输入框获取新值，而另一个输入框则更新经过转换的温度值。
 //一切更新都是经过同样的步骤，因而输入框能保持同步的。
+
+
+// 组合 vs 继承
+// React 具有强大的组合模型，我们建议使用组合而不是继承来复用组件之间的代码。
+
+// 在本节中，我们将围绕几个 React 新手经常使用继承解决的问题，我们将展示如果用组合来解决它们。
+
+function FancyBorder(props){
+    return (
+        <div className={'fancy border' + props.color}>   
+            {props.children}
+        </div>
+    )
+}
+
+function WelcomeDialog(){
+    return (
+        <FancyBorder color="blue">
+            <h1 className="Dialog-title">
+                Welcome
+            </h1>
+            <p className="Dialog-message">
+                Thank you for visiting our spacecraft!
+            </p>
+        </FancyBorder>
+    )
+}
+ReactDOM.render(
+  <WelcomeDialog />,
+  document.getElementById('root')
+);
+
+
+// 虽然不太常见，但有时你可能需要在组件中有多个入口，这种情况下你可以使用自己约定的属性而不是 children：
+function Contacts(){
+    return <div className="Contacts"></div>
+}
+function Chat(){
+    return <div className="Chat"></div>
+}
+function SplitPane(props){
+    return (
+        <div className="SplitPane">
+            <div className="SplitPane-left">
+                {props.left}
+            </div>
+            <div className="SplitPane-right">
+                {props.right}
+            </div>            
+        </div>
+    )
+}
+function App(){
+    return (
+        <SplitPane
+            left={<Contacts/>}
+            right={<Chat/>}
+        />
+    )
+}
+ReactDOM.render(
+  <App />,
+  document.getElementById('root')
+);
+
+
+// 特殊实例
+// 有时我们认为组件是其他组件的特殊实例。例如，我们会说 WelcomeDialog 是 Dialog 的特殊实例。
+// 在 React 中，这也是通过组合来实现的，通过配置属性用较特殊的组件来渲染较通用的组件。
+function FancyBorder(props) {
+  return (
+    <div className={'FancyBorder FancyBorder-' + props.color}>
+      {props.children}
+    </div>
+  );
+}
+
+function Dialog(props) {
+  return (
+    <FancyBorder color="blue">
+      <h1 className="Dialog-title">
+        {props.title}
+      </h1>
+      <p className="Dialog-message">
+        {props.message}
+      </p>
+    </FancyBorder>
+  );
+}
+
+function WelcomeDialog() {
+  return (
+    <Dialog
+      title="Welcome"
+      message="Thank you for visiting our spacecraft!" />
+  );
+}
+
+ReactDOM.render(
+  <WelcomeDialog />,
+  document.getElementById('root')
+);
+
+
+// 组合对于定义为类的组件同样适用：
+function FancyBorder(props){
+    return (
+        <div className={'FancyBorder FancyBorder-'+props.color}>   
+            {props.children}
+        </div>
+    )
+}
+function Dialog(props){
+    return (
+        <FancyBorder color="blue">
+            <h1 className="Dialog-title">
+                {props.title}
+            </h1>
+            <p className="Dialog-message">
+                {props.message}
+            </p>
+            {props.children}
+        </FancyBorder>
+    )
+}
+
+class SignUpDialog extends React.Component{
+    constructor(props){
+        super(props);
+        this.handleChange = this.handleChange.bind(this);
+        this.handleSignUp = this.handleSignUp.bind(this);
+        this.state = {login:''};
+    }
+    handleChange(e){
+        this.setState({login:e.target.value});
+    }
+    handleClick(e){
+        alert(`hi welcome:${this.state.login}`);
+    }
+    render(){
+        return(
+            <Dialog title="haha this is title" message="how old are u">
+                <input value={this.state.login} onChange={this.handleChange}/>
+                <button onClick={this.handleSignUp}>click me</button>
+            </Dialog>
+        )
+    }
+}
+ReactDOM.render(
+    <SignUpDialog/>,
+    document.getElementById('root')
+)
