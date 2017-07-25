@@ -1270,3 +1270,72 @@ ReactDOM.render(
     <SignUpDialog/>,
     document.getElementById('root')
 )
+
+
+
+// 默认为 True
+// 如果你没有给属性传值，它默认为 true。因此下面两个 JSX 是等价的：
+//<MyTextBox autocomplete />
+//<MyTextBox autocomplete={true} />
+
+
+
+// 使用 PropTypes 进行类型检查
+// React 也有一些内置的类型检查功能。要检查组件的属性，你需要配置特殊的 propTypes 属性
+// import PropTypes from 'prop-types';
+// class Greeting extends from React.Component{
+//     render(){
+//         return (
+//             <h1>Hello {this.props.name}</h1>
+//         )
+//     }
+// }
+// Greeting.propTypes = {
+//     name:PropTypes.string
+// }
+
+// 限制单个子代
+// 使用 PropTypes.element 你可以指定只传递一个子代
+
+// import PropTypes from 'prop-types';
+
+// class MyComponent extends React.Component {
+//   render() {
+//     // This must be exactly one element or it will warn.
+//     const children = this.props.children;
+//     return (
+//       <div>
+//         {children}
+//       </div>
+//     );
+//   }
+// }
+
+// MyComponent.propTypes = {
+//   children: PropTypes.element.isRequired
+// };
+
+// 属性默认值#
+// 你可以通过配置 defaultProps 为 props定义默认值：
+
+class Greeting extends React.Component {
+  render() {
+    return (
+      <h1>Hello, {this.props.name}</h1>
+    );
+  }
+}
+
+// 为属性指定默认值:
+Greeting.defaultProps = {
+  name: 'Stranger'
+};
+
+// 渲染 "Hello, Stranger":
+ReactDOM.render(
+  <Greeting />,
+  document.getElementById('example')
+);
+
+// defaultProps 用来确保 this.props.name 在父组件没有特别指定的情况下，有一个初始值。类型检查发生在 defaultProps 赋值之后，所以类型检查也会应用在 defaultProps 上面。
+
