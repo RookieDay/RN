@@ -1339,3 +1339,120 @@ ReactDOM.render(
 
 // defaultProps 用来确保 this.props.name 在父组件没有特别指定的情况下，有一个初始值。类型检查发生在 defaultProps 赋值之后，所以类型检查也会应用在 defaultProps 上面。
 
+// 为 DOM 元素添加 Ref
+// React 支持给任意组件添加特殊属性。ref 属性接受一个回调函数，它在组件被加载或卸载时会立即执行。
+// 
+// 当给 HTML 元素添加 ref 属性时，ref 回调接收了底层的 DOM 元素作为参数。例如，下面的代码使用 ref 回调来存储 DOM 节点的引用。
+
+class CustomTextInput extends React.Component{
+    constructor(props){
+        super(props);
+        this.focus = this.focus.bind(this);
+    }
+    focus (){
+        this.texInput.focus();
+    }
+    render(){
+        return (
+            <div>
+                <input
+                    type="text"
+                    ref={(input) =>{this.texInput = input;}}
+                />
+                <input
+                    type="button"
+                    value="Focus now"
+                    onClick={this.focus}
+                />
+            </div>    
+        )
+    }
+}
+
+// 为类组件添加 Ref
+// 当 ref 属性用于使用 class 声明的自定义组件时，ref 的回调接收的是已经加载的 React 实例。例如，如果我们想修改 CustomTextInput 组件，实现它在加载后立即点击的效果：
+
+class AutoFocusInput extends React.Component{
+    componentDidMount(){
+        this.textInput.focus();
+    }
+    render(){
+        return (
+            <CustomTextInput
+                 ref={(input) =>{this.texInput = input;}}
+            />
+        )
+    }
+}
+
+// 你可以在函数式组件内部使用 ref，只要它指向一个 DOM 元素或者 class 组件：
+
+function CustomTextInput(props) {
+  // 这里必须声明 textInput，这样 ref 回调才可以引用它
+  let textInput = null;
+
+  function handleClick() {
+    textInput.focus();
+  }
+
+  return (
+    <div>
+      <input
+        type="text"
+        ref={(input) => { textInput = input; }} />
+      <input
+        type="button"
+        value="Focus the text input"
+        onClick={handleClick}
+      />
+    </div>
+  );  
+}
+
+
+// 非受控组件
+// 在大多数情况下，我们推荐使用 受控组件 来实现表单。 在受控组件中，表单数据由 React 组件处理。如果让表单数据由 DOM 处理时，替代方案为使用非受控组件。
+
+// 要编写一个非受控组件，而非为每个状态更新编写事件处理程序，你可以 使用 ref 从 DOM 获取表单值。
+
+class NameForm extends React.Component{
+    constructor(props){
+        super(props);
+        this.handleSubmit = this.handleSubmit.bind(this);
+    }
+    handleSubmit(event){
+        alert('a name was submit: ' + this.input.value);
+        event.preventDefault();
+    }
+    render(){
+        return(
+            <form onSubmit={this.handleSubmit}>
+                <label>
+                    name:
+                    <input type="text" ref={(input) => this.input = input}/>
+                </label>
+                <input type="submit" value="Submit"/>
+            </form>
+        )
+    }
+}
+
+
+// 默认值
+// 在 React 的生命周期中，表单元素上的 value 属性将会覆盖 DOM 中的值。使用非受控组件时，通常你希望 React 可以为其指定初始值，但不再控制后续更新。要解决这个问题，你可以指定一个 defaultValue 属性而不是 value。
+
+// render() {
+//   return (
+//     <form onSubmit={this.handleSubmit}>
+//       <label>
+//         Name:
+//         <input
+//           defaultValue="Bob"
+//           type="text"
+//           ref={(input) => this.input = input} />
+//       </label>
+//       <input type="submit" value="Submit" />
+//     </form>
+//   );
+// }
+// 同样，<input type="checkbox"> 和 <input type="radio"> 支持 defaultChecked，<select> 和 <textarea> 支持 defaultValue.
