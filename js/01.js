@@ -1048,6 +1048,7 @@ class TemperatureInput extends React.Component {
         this.props.onTemperatureChange(e.target.value);
     }
 
+
     render() {
         const temperature = this.props.temperature;
         const scale = this.props.scale;
@@ -1338,7 +1339,7 @@ ReactDOM.render(
 );
 
 // defaultProps 用来确保 this.props.name 在父组件没有特别指定的情况下，有一个初始值。类型检查发生在 defaultProps 赋值之后，所以类型检查也会应用在 defaultProps 上面。
-
+//ref的讲解http://www.onmpw.com/tm/xwzj/web_154.html
 // 为 DOM 元素添加 Ref
 // React 支持给任意组件添加特殊属性。ref 属性接受一个回调函数，它在组件被加载或卸载时会立即执行。
 // 
@@ -1470,4 +1471,72 @@ class NameForm extends React.Component{
 // }
 // 如果你知道在某些情况下你的组件不需要更新，你可以在shouldComponentUpdate内返回false来跳过整个渲染进程，该进程包括了对该组件和之后的内容调用render()指令。
 
+// 受控和非受控组件的理解
+// https://goshakkk.name/controlled-vs-uncontrolled-inputs-react/
+// 如何使用 Timeline 工具 https://developers.google.com/web/tools/chrome-devtools/evaluate-performance/timeline-tool
 
+
+// 如果想让组件只在props.color或者state.count的值变化时重新渲染，你可以像下面这样设定shouldComponentUpdate：
+class CounterButton extends React.Component{
+    constructor(props){
+        super(props);
+        this.state = {count:1};
+    }
+    shouldComponentUpdate(nextProps,nextState){
+        if(this.props.color !== nextProps.color){
+            return true;
+        }
+        if(this.state.count !== nextState.count){
+            return true;
+        }
+        return false;
+    }
+    render(){
+        return (
+            <button
+                color={this.props.color}
+                onClick={()=>this.setState(state=>({count:state.count+1}))}
+            >
+            Count：{this.state.count}
+            </button>
+        )
+    }
+}
+
+// 在以上代码中，shouldComponentUpdate只检查props.color和state.count的变化。如果这些值没有变化，组件就不会更新。当你的组件变得更加复杂时，你可以使用类似的模式来做一个“浅比较”，用来比较属性和值以判定是否需要更新组件。这种模式十分常见，因此React提供了一个辅助对象来实现这个逻辑 - 继承自React.PureComponent。以下代码可以更简单的实现相同的操作：
+
+class CountButton extends React.PureComponent{
+    constructor(props){
+        super(props);
+        this.state = {count:1}
+    }
+    render(){
+        return (
+            <button
+                color={this.props.color}
+                onClick={()=>this.setState(state=>({count:state.count+1}))}
+            >
+            count:{this.state.count}
+
+            </button>
+        )
+    }
+}
+// 大部分情况下，你可以使用React.PureComponent而不必写你自己的shouldComponentUpdate，它只做一个浅比较。但是由于浅比较会忽略属性或状态突变的情况，此时你不能使用它。
+
+// 不会突变的数据的力量
+// 避免此类问题最简单的方式是避免使用值可能会突变的属性或状态。例如，上面例子中的handleClick应该用concat重写成：
+// handleClick(){
+//     this.setState(prevState =>({
+//         words:prevState.words.concat(['marklar'])
+//     }));
+// }
+
+// handleClick(){
+//     this.setState(prevState =>({
+//         words:[...prevState.words, 'marklar']
+//     }));
+// }
+
+//React PureComponent 使用指南 https://wulv.site/2017-05-31/react-purecomponent.html
+// 在React.js中使用PureComponent的重要性和使用方式 http://www.zcfy.cc/article/why-and-how-to-use-purecomponent-in-react-js-60devs-2344.html
