@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>React</title>
+    <script src="../build/node_modules/react/dist/react.js"></script>
+    <script src="../build/node_modules/react-dom/dist/react-dom.js"></script>
+    <script src="../build/node_modules/browser/browser.min.js"></script>
+
+</head>
+<body>
+    <div id="root"> </div>
+    <script type="text/babel">
+    class Son extends React.Component{
+        shouldComponentUpdate(nextProps,nextState){
+            if(nextProps.numberObject.number == this.props.numberObject.number){
+                return false
+            }
+            return true
+        }
+        render(){
+            const {index,numberObject,handleClick} = this.props
+            //在每次渲染子组件时，打印该子组件的数字内容
+            console.log(numberObject.number);
+            return <h1 onClick ={() => handleClick(index)}>{numberObject.number}</h1>
+        }
+    }
+    class Father extends React.Component{
+        constructor(props){
+            super(props);
+            this.state = {
+            numberArray:[{number:0 /*对象中其他的属性*/},
+                        {number:1 /*对象中其他的属性*/},
+                        {number:2 /*对象中其他的属性*/}
+                        ]
+            }
+            this.handleClick = this.handleClick.bind(this);
+        }
+        handleClick(index){
+            let preNumberArray = this.state.numberArray
+            preNumberArray[index].number += 1;
+            this.setState({
+                numberArray:preNumberArray
+            })
+        }
+        render(){
+            return(<div style ={{margin:30}}>{
+                    this.state.numberArray.map(
+                        (numberObject,key) => {
+                        return <Son
+                                key = {key}
+                                index = {key}
+                                numberObject ={numberObject}
+                                handleClick ={this.handleClick}/>
+                        }
+                        )
+                    }
+           </div>)
+        }
+    }
+    ReactDOM.render(
+        <Father/>,
+        document.getElementById('root')
+    )
+    
+    </script>
+</body>
+
+</html>
+
+<!-- nextProps.numberObject和this.props.numberObject的实际上指向的是同一个堆内存中的对象，所以点击标题时在多次判断条件中nextProps.numberObject.number==this.props.numberObject.number 等同于0 == 0 --> 1 == 1--> 2 == 2，所以总返回true，导致每次点击 调用shouldComponentUpdate()函数时都阻止了渲染，所以我们才看不到标题变化和控制台输出。 -->
+<!-- 怎么才能保证每次取到不同的numberObject？ -->
+   
+<!-- 我们有三种方式： -->
+ 
+<!-- 1.ES6的扩展语法Object.assign()//react官方推荐的es6写法
+2深拷贝／浅拷贝或利用JSON.parse(JSON.stringify(data))//相当于深拷贝，但使用受一定限制，具体的童鞋们可自行百度
+3 immutable.js//react官方推荐使用的第三方库，目前github上20K star,足见其火热
+4 继承react的PureComponent组件 -->

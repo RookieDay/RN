@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>React</title>
+    <script src="../build/node_modules/react/dist/react.js"></script>
+    <script src="../build/node_modules/react-dom/dist/react-dom.js"></script>
+    <script src="../build/node_modules/browser/browser.min.js"></script>
+
+</head>
+<body>
+    <div id="root"> </div>
+    <script type="text/babel">
+    class Son extends React.Component{
+        shouldComponentUpdate(nextProps,nextState){
+            if(nextProps.number == this.props.number){
+                return false;
+            }
+            return true;
+        }
+        render(){
+            const {index,number,handleClick} = this.props;
+            console.log(number);
+            return <h1 onClick={()=>handleClick(index)}>{number}</h1>
+        }
+    }
+    class Father extends React.Component{
+        constructor(props){
+            super(props);
+            this.state = {
+                numberArray:[0,1,2]
+            }
+            this.handleClick = this.handleClick.bind(this);
+        }
+        handleClick(index){
+            let pre = this.state.numberArray;
+            pre[index] += 1;
+            this.setState({
+                numberArray:pre
+            })
+        }
+        render(){
+            return(<div style ={{margin:30}}>{
+                    this.state.numberArray.map(
+                        (number,key) => {
+                        return <Son
+                                key = {key}
+                                index = {key}
+                                number ={number}
+                                handleClick ={this.handleClick}/>
+                        }
+                        )
+                    }
+           </div>)
+        }
+    }
+    ReactDOM.render(
+        <Father/>,
+        document.getElementById('root')
+    )
+    
+    </script>
+</body>
+
+</html>
+
+<!-- 这次只打印了数字发生改变的numberArray[0]对应的Son组件，说明numberArray[1]，numberArray[2]的重渲染被“过滤”了！
+ -->
