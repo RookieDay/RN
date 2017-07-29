@@ -1540,3 +1540,7 @@ class CountButton extends React.PureComponent{
 
 //React PureComponent 使用指南 https://wulv.site/2017-05-31/react-purecomponent.html
 // 在React.js中使用PureComponent的重要性和使用方式 http://www.zcfy.cc/article/why-and-how-to-use-purecomponent-in-react-js-60devs-2344.html
+//性能优化推荐 react pure http://www.cnblogs.com/penghuwan/p/6707254.html
+
+//Mxmins https://segmentfault.com/a/1190000002704788
+//Mxmins https://segmentfault.com/a/1190000003016446
