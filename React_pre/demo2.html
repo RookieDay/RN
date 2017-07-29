@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>React</title>
+    <script src="../build/node_modules/react/dist/react.js"></script>
+    <script src="../build/node_modules/react-dom/dist/react-dom.js"></script>
+    <script src="../build/node_modules/browser/browser.min.js"></script>
+
+</head>
+<body>
+    <div id="root"> </div>
+    <script type="text/babel">
+    class NumberComp extends React.Component{
+        constructor(props){
+            super(props);
+            this.state = {
+                Number:1
+            }
+            this.handleClick = this.handleClick.bind(this);
+        }
+        shouldComponentUpdate(nextProps,nextState){
+            if(nextState.Number == this.state.Number){
+                return false;
+            }
+           return true;
+        }
+        handleClick(){
+            const preNubmer = this.state.Number;
+            this.setState({
+                Number:this.state.Number
+            })
+        }
+        render(){
+            console.log(this.state.Number);
+            return(
+                <h1 onClick={this.handleClick}>
+                    {this.state.Number}
+                </h1>
+            )
+        }
+    }
+    ReactDOM.render(
+        <NumberComp/>,
+        document.getElementById('root')
+    )
+    
+    </script>
+</body>
+
+</html>
+
+<!-- //UI明明就没有任何变化啊，为什么要做着中多余的重渲染的工作呢？把这工作给去掉吧！ -->

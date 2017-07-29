@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>React</title>
+    <script src="../build/node_modules/react/dist/react.js"></script>
+    <script src="../build/node_modules/react-dom/dist/react-dom.js"></script>
+    <script src="../build/node_modules/browser/browser.min.js"></script>
+
+</head>
+<body>
+    <div id="root"> </div>
+    <script type="text/babel">
+    class Son extends React.Component{
+        render(){
+            const {index,number,handleClick} = this.props;
+            console.log(number);
+            return <h1 onClick={()=>handleClick(index)}>{number}</h1>
+        }
+    }
+    class Father extends React.Component{
+        constructor(props){
+            super(props);
+            this.state = {
+                numberArray:[0,1,2]
+            }
+            this.handleClick = this.handleClick.bind(this);
+        }
+        handleClick(index){
+            let pre = this.state.numberArray;
+            pre[index] += 1;
+            this.setState({
+                numberArray:pre
+            })
+        }
+        render(){
+            return(<div style ={{margin:30}}>{
+                    this.state.numberArray.map(
+                        (number,key) => {
+                        return <Son
+                                key = {key}
+                                index = {key}
+                                number ={number}
+                                handleClick ={this.handleClick}/>
+                        }
+                        )
+                    }
+           </div>)
+        }
+    }
+    ReactDOM.render(
+        <Father/>,
+        document.getElementById('root')
+    )
+    
+    </script>
+</body>
+
+</html>
+
+<!-- 在这个例子中，我们在父组件Father的state对象中设置了一个numberArray的数组，并且将数组元素通过map函数传递至三个子组件Son中，作为其显示的内容（标题1，2，3），点击每个Son组件会更改对应的state中numberArray的数组元素，从而使父组件重渲染，继而导致子组件重渲染
+ -->
