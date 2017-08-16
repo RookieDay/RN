@@ -14,6 +14,7 @@ class Counter extends Component{
         }
     }
     incrementAsync(){
+        // 延时1s 执行onIncrement
         setTimeout(this.props.onIncrement, 1000);
     }
     render(){
