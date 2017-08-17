@@ -237,5 +237,24 @@ const mapDispatchToProps = {
 }
 
 
+connect方法生成容器组件以后，需要让容器组件拿到state对象，才能生成 UI 组件的参数。
+一种解决方法是将state对象作为参数，传入容器组件。但是，这样做比较麻烦，尤其是容器组件可能在很深的层级，一级级将state传下去就很麻烦。
+React-Redux 提供Provider组件，可以让容器组件拿到state。
+
+
+import { Provider } from 'react-redux'
+import { createStore } from 'redux'
+import todoApp from './reducers'
+import App from './components/App'
+
+let store = createStore(todoApp);
+
+render(
+  <Provider store={store}>
+    <App />
+  </Provider>,
+  document.getElementById('root')
+)
+上面代码中，Provider在根组件外面包了一层，这样一来，App的所有子组件就默认都可以拿到state了。
 
 ```
