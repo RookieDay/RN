@@ -1,5 +1,6 @@
 import React from 'react'
 import FilterLink from '../containers/FilterLink'
+// ownProps有属于自己的属性 filter
 const Footer = ()=>(
     <p>
         Show:

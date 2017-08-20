@@ -1,7 +1,7 @@
 import {connect} from 'react-redux'
 import {toggleTodo} from '../actions'
 import TodoList from '../components/TodoList'
-
+// 容器组件传递todos/ onTodoClick到展示组件TodoList
 const getVisibleTodos = (todos,filter)=>{
     switch(filter){
         case 'SHOW_ALL':

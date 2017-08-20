@@ -1,6 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
+// 传递来自于容器组件FilterLink
+// link点击 传递 filter的
 const Link = ({active,children,onClick}) =>{
     if(active){
         return <span>{children}</span>

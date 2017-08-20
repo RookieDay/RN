@@ -1,7 +1,7 @@
 import {connect} from 'react-redux'
 import {setVisibilityFilter} from '../actions'
 import Link from '../components/Link'
-
+// active/onClick容器组件对应传递的展示组件Link
 const mapStateToProps = (state,ownProps)=>({
     active:ownProps.filter === state.visibilityFilter
 })

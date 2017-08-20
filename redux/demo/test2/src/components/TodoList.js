@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import Todo from './Todo'
-
+// {...todos} 解构
 const TodoList = ({todos,onTodoClick})=>(
     <ul>
         {todos.map(todo =>
