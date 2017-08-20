@@ -1,14 +1,14 @@
 import React from 'react'
 import Footer from './Footer'
 import AddTodo from '../containers/AddTodo'
-import VisibiltTodoList from '../containers/VisibileTodoList'
+import VisibleTodoList from '../containers/VisibleTodoList'
 
-const App = () =>{
+const App = () =>(
     <div>
         <AddTodo/>
-        <VisibiltTodoList/>
+        <VisibleTodoList/>
         <Footer/>
     </div>
-}
+)
 
 export default App
