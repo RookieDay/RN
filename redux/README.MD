@@ -382,3 +382,119 @@ const rootReducer = combineReducers({
 export default rootReducer
 
 ```
+
+- 我们是如何在 dispatch 机制中引入 Redux Thunk middleware 的呢？我们使用了 applyMiddleware()，如下：
+```
+index.js
+import thunkMiddleware from 'redux-thunk'
+import createLogger from 'redux-logger'
+import {createStore, applyMiddleware} from 'redux'
+import rootReducer from './reducers'
+
+const loggerMiddleware = createLogger()
+
+const store = createStore(
+  rootReducer,
+  applyMiddleware(
+    thunkMiddleware,// 允许我们 dispatch() 函数
+    loggerMiddle // 一个很便捷的 middleware，用来打印 action 日志
+  )
+)
+
+store.dispatch(selectSubreddit('react.js'))
+store.dispatch((fetchPosts('reacjt.js')).then=>(()=>
+  console.log(store.getState)
+))
+```
+```
+thunk 的一个优点是它的结果可以再次被 dispatch：
+import fetch from 'isomorphic-fetch'
+
+export const REQUEST_POSTS = 'REQUEST_POSTS'
+function requestPosts(subreddit){
+  return {
+    type:REQUEST_POSTS,
+    sureddit
+  }
+}
+export const REVEIVE_POSTS = 'REVEIVE_POSTS'
+function receivePosts(subreddit,json){
+  return {
+    type:REVEIVE_POSTS,
+    subreddit,
+    post:json.data.childre.map(child=>child.data),
+    receivedAt:Date.now()
+  }
+}
+function fetchPosts(subreddit){
+  return dispatch =>{
+    dispatch(requestPosts(subreddit))
+    return fetch(`http://www.reddit.com/r/${subreddit}.json`)
+      .then(response => response.json())
+      .then(json => dispatch(receivePosts(subreddit, json)))
+  }
+  }
+}
+function shouldFetchPosts(state,subreddit){
+  const posts = state.postsBySubreddit[sureddit]
+  if(!posts){
+    return true
+  } else if(posts.isFetching){
+    return false
+  } else {
+    return posts.didInvalidate
+  }
+}
+
+export function fetchPostsIfNeeded(subreddit){
+   // 注意这个函数也接收了 getState() 方法
+  // 它让你选择接下来 dispatch 什么。
+
+  // 当缓存的值是可用时，
+  // 减少网络请求很有用。
+  return (dispatch,getState) =>{
+    if (shouldFetchPosts(getState(), subreddit)) {
+      // 在 thunk 里 dispatch 另一个 thunk！
+      return dispatch(fetchPosts(subreddit))
+    } else {
+      // 告诉调用代码不需要再等待。
+      return Promise.resolve()
+    }
+  }
+}
+```
+- middleware：
+```
+const logger = store => next => action =>{
+  console.log('dispatching', action)
+  let result = next(action)
+  console.log('next state', store.getState())
+  return result
+}
+const crashReporter = store => next => action =>{
+  try {
+    return next(action)
+  } catch(err){
+    console.error('catught an exception',err)
+    Raven.captureExpection(err,{
+      extra:{
+        action,
+        state:store.getState()
+      }
+    })
+    throw err
+  }
+}
+```
+
+```
+将它们引用到 Redux store 中：
+import { createStore, combineReducers, applyMiddleware } from 'redux'
+
+let todoApp = combineReducers(reducers)
+let store = createStore(
+  todoApp,
+  // applyMiddleware() 告诉 createStore() 如何处理中间件
+  applyMiddleware(logger, crashReporter)
+)
+```
